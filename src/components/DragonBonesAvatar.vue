@@ -11,9 +11,9 @@ const canvas = ref<HTMLCanvasElement | null>(null);
 let app: PIXI.Application | null = null;
 let armatureDisplay: any = null;
 
-const SKELETON_URL = '/assets/avatar_ske.json';
-const TEXTURE_DATA_URL = '/assets/avatar_tex.json';
-const TEXTURE_URL = '/assets/avatar_tex.png';
+const SKELETON_URL = 'https://raw.githubusercontent.com/SGGames/DragonBones-Pixi/master/public/resource/mecha_1002_101d_show/mecha_1002_101d_show_ske.json';
+const TEXTURE_DATA_URL = 'https://raw.githubusercontent.com/SGGames/DragonBones-Pixi/master/public/resource/mecha_1002_101d_show/mecha_1002_101d_show_tex.json';
+const TEXTURE_URL = 'https://raw.githubusercontent.com/SGGames/DragonBones-Pixi/master/public/resource/mecha_1002_101d_show/mecha_1002_101d_show_tex.png';
 
 onMounted(async () => {
   if (!canvas.value) {
@@ -42,9 +42,9 @@ onMounted(async () => {
   factory.parseDragonBonesData(skeletonData);
   factory.parseTextureAtlasData(textureData, texture);
 
-  armatureDisplay = factory.buildArmatureDisplay('armature');
+  armatureDisplay = factory.buildArmatureDisplay('mecha_1002_101d', 'mecha_1002_101d_show');
   if (!armatureDisplay) {
-    console.error('Failed to build armature');
+    console.error('Failed to build armature "mecha_1002_101d"');
     return;
   }
 
