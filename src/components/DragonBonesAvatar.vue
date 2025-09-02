@@ -23,7 +23,7 @@ onMounted(async () => {
   // 1. Initialize PixiJS
   app = new PIXI.Application();
   await app.init({
-    view: canvas.value,
+    canvas: canvas.value,
     width: 800,
     height: 600,
     backgroundColor: 0x1099bb,
@@ -57,8 +57,9 @@ onMounted(async () => {
   armatureDisplay.y = app.screen.height / 2;
 
   // 5. Add ticker for DragonBones WorldClock
-  app.ticker.add(() => {
-    PixiFactory.factory.dragonBones.advanceTime(-1);
+  app.ticker.add((ticker) => {
+    // Pass the elapsed time in seconds to the DragonBones engine.
+    PixiFactory.factory.dragonBones.advanceTime(ticker.deltaMS / 1000);
   });
 });
 
