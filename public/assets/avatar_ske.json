@@ -1,0 +1,78 @@
+{
+  "frameRate": 24,
+  "name": "avatar",
+  "version": "5.5",
+  "armature": [
+    {
+      "type": "Armature",
+      "frameRate": 24,
+      "name": "armature",
+      "bone": [
+        {
+          "name": "root"
+        }
+      ],
+      "slot": [
+        {
+          "name": "root",
+          "parent": "root"
+        }
+      ],
+      "skin": [
+        {
+          "name": "",
+          "slot": [
+            {
+              "name": "root",
+              "display": [
+                {
+                  "name": "placeholder",
+                  "type": "image"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "animation": [
+        {
+          "duration": 1,
+          "playTimes": 0,
+          "name": "idle",
+          "bone": [
+            {
+              "name": "root",
+              "frame": [
+                {
+                  "duration": 1,
+                  "transform": {}
+                }
+              ]
+            }
+          ]
+        },
+        {
+            "duration": 1,
+            "playTimes": 1,
+            "name": "wave",
+            "bone": [
+              {
+                "name": "root",
+                "frame": [
+                  {
+                    "duration": 1,
+                    "transform": {}
+                  }
+                ]
+              }
+            ]
+        }
+      ],
+      "defaultActions": [
+        {
+          "gotoAndPlay": "idle"
+        }
+      ]
+    }
+  ]
+}

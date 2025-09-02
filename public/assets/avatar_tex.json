@@ -1,0 +1,15 @@
+{
+  "width": 1,
+  "imagePath": "avatar_tex.png",
+  "height": 1,
+  "name": "avatar",
+  "SubTexture": [
+    {
+      "width": 1,
+      "y": 0,
+      "height": 1,
+      "name": "placeholder",
+      "x": 0
+    }
+  ]
+}
