@@ -11,19 +11,18 @@ const canvas = ref<HTMLCanvasElement | null>(null);
 let app: PIXI.Application | null = null;
 let armatureDisplay: any = null;
 
-const SKELETON_URL = 'https://raw.githubusercontent.com/SGGames/DragonBones-Pixi/master/public/resource/mecha_1002_101d_show/mecha_1002_101d_show_ske.json';
-const TEXTURE_DATA_URL = 'https://raw.githubusercontent.com/SGGames/DragonBones-Pixi/master/public/resource/mecha_1002_101d_show/mecha_1002_101d_show_tex.json';
-const TEXTURE_URL = 'https://raw.githubusercontent.com/SGGames/DragonBones-Pixi/master/public/resource/mecha_1002_101d_show/mecha_1002_101d_show_tex.png';
+const SKELETON_URL = '/assets/avatar_ske.json';
+const TEXTURE_DATA_URL = '/assets/avatar_tex.json';
+const TEXTURE_URL = '/assets/avatar_tex.png';
 
-onMounted(async () => {
+onMounted(() => {
   if (!canvas.value) {
     return;
   }
 
   // 1. Initialize PixiJS
-  app = new PIXI.Application();
-  await app.init({
-    canvas: canvas.value,
+  app = new PIXI.Application({
+    view: canvas.value,
     width: 800,
     height: 600,
     backgroundColor: 0x1099bb,
@@ -31,36 +30,36 @@ onMounted(async () => {
   });
 
   // 2. Load DragonBones assets
-  await PIXI.Assets.load([SKELETON_URL, TEXTURE_DATA_URL, TEXTURE_URL]);
+  app.loader
+    .add('skeleton', SKELETON_URL)
+    .add('textureData', TEXTURE_DATA_URL)
+    .add('texture', TEXTURE_URL)
+    .load((loader, resources) => {
+      // 3. Parse data and build armature
+      const factory = PixiFactory.factory;
+      factory.parseDragonBonesData(resources.skeleton.data, 'avatar');
+      factory.parseTextureAtlasData(resources.textureData.data, resources.texture.texture, 'avatar');
 
-  // 3. Parse data and build armature
-  const factory = PixiFactory.factory;
-  const skeletonData = PIXI.Assets.get(SKELETON_URL);
-  const textureData = PIXI.Assets.get(TEXTURE_DATA_URL);
-  const texture = PIXI.Assets.get(TEXTURE_URL);
+      armatureDisplay = factory.buildArmatureDisplay('armature', 'avatar');
+      if (!armatureDisplay) {
+        console.error('Failed to build armature "armature"');
+        return;
+      }
 
-  factory.parseDragonBonesData(skeletonData);
-  factory.parseTextureAtlasData(textureData, texture);
+      // 4. Add armature to stage and play animation
+      app.stage.addChild(armatureDisplay);
+      armatureDisplay.animation.play('wave');
 
-  armatureDisplay = factory.buildArmatureDisplay('mecha_1002_101d', 'mecha_1002_101d_show');
-  if (!armatureDisplay) {
-    console.error('Failed to build armature "mecha_1002_101d"');
-    return;
-  }
+      // Center the armature
+      armatureDisplay.x = app.screen.width / 2;
+      armatureDisplay.y = app.screen.height / 2;
 
-  // 4. Add armature to stage and play animation
-  app.stage.addChild(armatureDisplay);
-  armatureDisplay.animation.play('idle');
-
-  // Center the armature
-  armatureDisplay.x = app.screen.width / 2;
-  armatureDisplay.y = app.screen.height / 2;
-
-  // 5. Add ticker for DragonBones WorldClock
-  app.ticker.add((ticker) => {
-    // Pass the elapsed time in seconds to the DragonBones engine.
-    PixiFactory.factory.dragonBones.advanceTime(ticker.deltaMS / 1000);
-  });
+      // 5. Add ticker for DragonBones WorldClock
+      app.ticker.add((delta) => {
+        // Pass the elapsed time in seconds to the DragonBones engine.
+        PixiFactory.factory.dragonBones.advanceTime(delta / 60);
+      });
+    });
 });
 
 onUnmounted(() => {
@@ -70,9 +69,9 @@ onUnmounted(() => {
   }
 
   PixiFactory.factory.clear(true);
-  PIXI.Assets.unload([SKELETON_URL, TEXTURE_DATA_URL, TEXTURE_URL]);
 
   if (app) {
+    app.loader.reset();
     app.destroy(true, true);
     app = null;
   }
